@@ -1,4 +1,4 @@
-git commit -m "first commit"# Tony's Pizzeria: virtual threads at scale
+# Tony's Pizzeria: virtual threads at scale
 
 One small Spring Boot app with seven short demos, one for each topic of the talk. Every demo is a controller, a service and a model record, nothing else. You drive the load demos with JMeter, the rest with a browser link or a terminal command.
 
