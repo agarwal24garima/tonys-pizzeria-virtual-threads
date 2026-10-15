@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>4.1.1</version>
+        <relativePath/>
+    </parent>
+
+    <groupId>dev.pizzeria</groupId>
+    <artifactId>tonys-pizzeria</artifactId>
+    <version>1.0.0</version>
+    <name>Tony's Pizzeria</name>
+    <description>Virtual threads at scale: Spring Boot, CPU vs I/O, pinning, scoped values, structured concurrency and JFR</description>
+
+    <properties>
+        <!-- Java 25. StructuredTaskScope (demo 6) is a preview API in Java 25, so compiling, testing
+             and running all need enable-preview. That ties the build to Java 25 exactly.
+             For the Java 21 kitchen in demo 4, see the java21 profile at the bottom. -->
+        <java.version>25</java.version>
+    </properties>
+
+    <dependencies>
+        <!-- Spring MVC on Tomcat (called spring-boot-starter-web before Spring Boot 4) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webmvc</artifactId>
+        </dependency>
+
+        <!-- JUnit 5 and AssertJ for the tests -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <compilerArgs>
+                        <arg>--enable-preview</arg>
+                    </compilerArgs>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>--enable-preview</argLine>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <jvmArguments>--enable-preview</jvmArguments>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <!-- The Java 21 kitchen for demo 4 (pinning): mvn -Pjava21 spring-boot:run, with JAVA_HOME on a JDK 21.
+             It leaves out demos 5 and 6, which need Java 25, builds into target/java21 so it never mixes
+             with the Java 25 classes, and starts on port 8081 with a JFR recording. -->
+        <profile>
+            <id>java21</id>
+            <properties>
+                <java.version>21</java.version>
+                <maven.test.skip>true</maven.test.skip>
+            </properties>
+            <build>
+                <directory>${project.basedir}/target/java21</directory>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <configuration>
+                            <compilerArgs combine.self="override"/>
+                            <excludes>
+                                <exclude>**/ScopedValue*.java</exclude>
+                                <exclude>**/Structured*.java</exclude>
+                            </excludes>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <configuration>
+                            <jvmArguments combine.self="override">-XX:StartFlightRecording:filename=recordings/java21.jfr,settings=profile,dumponexit=true</jvmArguments>
+                            <arguments>
+                                <argument>--server.port=8081</argument>
+                            </arguments>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tony's Pizzeria</title>
+<style>
+  :root { --ink: #000000; --body: #333A44; --muted: #5B6370; --line: #D3D9E0; --steel: #EEF1F4; --blue: #0072B2; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #FFFFFF; color: var(--ink); font: 19px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 58rem; margin: 0 auto; padding: 2.5rem 1rem 4rem; }
+  h1 { margin: 0 0 .4rem; font: 700 2.4rem/1.1 Georgia, Cambria, "Times New Roman", serif; }
+  .lead { margin: 0 0 2rem; color: var(--body); max-width: 44rem; }
+  section { display: grid; grid-template-columns: 2.6rem 1fr; gap: 0 1rem; padding: 1.1rem 0; border-top: 1px solid var(--line); }
+  .n { font: 700 1.7rem/1.2 Georgia, Cambria, serif; }
+  h2 { margin: 0; font-size: 1.15rem; }
+  p { margin: .15rem 0 .55rem; color: var(--body); }
+  .links { display: flex; flex-wrap: wrap; gap: .4rem 1.4rem; }
+  a { color: var(--blue); font-weight: 600; text-underline-offset: 3px; }
+  a:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
+  code { font: .9em ui-monospace, Consolas, Menlo, monospace; background: var(--steel); padding: .05rem .35rem; border-radius: 3px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Tony's Pizzeria</h1>
+  <p class="lead">Virtual threads at scale. Each link sends one request and shows what came back, including the thread that did the work. For load, open the matching JMeter plan in <code>jmeter/</code>.</p>
+
+  <section>
+    <div class="n">1</div>
+    <div>
+      <h2>Halftime rush: traditional threads, CompletableFuture, virtual threads</h2>
+      <p>One order: bake 500 ms, take payment 250 ms, book a driver 250 ms. JMeter: <code>jmeter/halftime-rush.jmx</code></p>
+      <div class="links">
+        <a href="/orders/traditional">Traditional threads</a>
+        <a href="/orders/completable-future">CompletableFuture</a>
+        <a href="/orders/virtual">Virtual threads</a>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="n">2</div>
+    <div>
+      <h2>Ten thousand tickets: what a thread costs</h2>
+      <p>Start 10,000 threads at once and count the time, the operating-system threads and the heap.</p>
+      <div class="links">
+        <a href="/threads/platform?count=10000">10,000 platform threads</a>
+        <a href="/threads/virtual?count=10000">10,000 virtual threads</a>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="n">3</div>
+    <div>
+      <h2>Dough station: CPU-bound work</h2>
+      <p>Kneading dough is pure CPU work with nothing to wait for, so virtual threads bring no gain. JMeter: <code>jmeter/cpu-bound.jmx</code></p>
+      <div class="links">
+        <a href="/cpu/traditional">Traditional threads</a>
+        <a href="/cpu/virtual">Virtual threads</a>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="n">4</div>
+    <div>
+      <h2>The stuck waiter: thread pinning, Java 21 vs Java 25</h2>
+      <p>Blocking inside <code>synchronized</code> pins a virtual thread on Java 21, not on Java 24 and later. Needs <strong>Both kitchens</strong> running. JMeter: <code>jmeter/pinning.jmx</code>. Then catch it with <code>jfr view pinned-threads</code>.</p>
+      <div class="links">
+        <a href="/pinning/synchronized">synchronized (this app)</a>
+        <a href="http://localhost:8081/pinning/synchronized">synchronized on Java 21 (port 8081)</a>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="n">5</div>
+    <div>
+      <h2>The coupon left on the counter: ThreadLocal vs ScopedValue</h2>
+      <p>One cashier thread serves everyone. Open the links in order: Rossi brings a half-price coupon, Bianchi brings none.</p>
+      <div class="links">
+        <a href="/coupon/thread-local?customer=Rossi&amp;coupon=HALF-PRICE">ThreadLocal: Rossi</a>
+        <a href="/coupon/thread-local?customer=Bianchi">ThreadLocal: Bianchi</a>
+        <a href="/coupon/scoped-value?customer=Rossi&amp;coupon=HALF-PRICE">ScopedValue: Rossi</a>
+        <a href="/coupon/scoped-value?customer=Bianchi">ScopedValue: Bianchi</a>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="n">6</div>
+    <div>
+      <h2>The oven nobody switched off: CompletableFuture vs StructuredTaskScope</h2>
+      <p>One order bakes, takes payment and books a driver at the same time. With a declined card, watch the IntelliJ console.</p>
+      <div class="links">
+        <a href="/chef/completable-future?paymentFails=true">CompletableFuture, card declined</a>
+        <a href="/chef/structured?paymentFails=true">StructuredTaskScope, card declined</a>
+        <a href="/chef/structured">StructuredTaskScope, card accepted</a>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="n">7</div>
+    <div>
+      <h2>CCTV: Java Flight Recorder</h2>
+      <p>Both run configurations record with JFR. Save a recording with <code>jcmd &lt;pid&gt; JFR.dump filename=recordings/now.jfr</code>, then try <code>jfr view hot-methods</code>, on Java 25 <code>jfr view method-timing</code>, and <code>jcmd &lt;pid&gt; Thread.dump_to_file</code> for the virtual threads. Steps in <code>Readme.md</code>.</p>
+    </div>
+  </section>
+</main>
+</body>
+</html>

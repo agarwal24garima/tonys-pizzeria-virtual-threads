@@ -1,0 +1,9 @@
+target/
+results/
+recordings/*.jfr
+recordings/*.json
+recordings/*.txt
+!recordings/README.txt
+.idea/
+*.iml
+.DS_Store

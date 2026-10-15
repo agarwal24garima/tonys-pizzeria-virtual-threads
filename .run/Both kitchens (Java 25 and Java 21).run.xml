@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Both kitchens (Java 25 and Java 21)" type="CompoundRunConfigurationType">
+    <toRun name="Tony's Pizzeria" type="Application" />
+    <toRun name="Tony's Pizzeria on Java 21" type="MavenRunConfiguration" />
+    <method v="2" />
+  </configuration>
+</component>

@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Tony's Pizzeria" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="dev.pizzeria.PizzeriaApplication" />
+    <module name="tonys-pizzeria" />
+    <option name="VM_PARAMETERS" value="--enable-preview -XX:StartFlightRecording:filename=recordings/java25.jfr,settings=profile,dumponexit=true,method-timing=dev.pizzeria.service.KitchenService" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
